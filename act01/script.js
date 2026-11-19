@@ -60,8 +60,7 @@ do {
                 let maximo = -Infinity;
                 let minimo = Infinity;
                 let suma = 0;
-                let maxRepeticiones = 0;
-                let moda = notas[0];
+                let repeticiones = new Map();
 
                 for (let i = 0; i < notas.length; i++) {
                     if (notas[i] > maximo) {
@@ -72,16 +71,20 @@ do {
                     }
                     suma += notas[i];
 
-                    let repeticiones = 0;
-                    for (let j = 0; j < notas.length; j++) {
-                        if (notas[i] === notas[j]) {
-                            repeticiones++;
-                        }
+                    if (repeticiones.has(notas[i])) {
+                        repeticiones.set(notas[i], repeticiones.get(notas[i]) + 1);
                     }
+                    else {
+                        repeticiones.set(notas[i], 1);
+                    }
+                }
 
-                    if (repeticiones > maxRepeticiones) {
-                        maxRepeticiones = repeticiones;
-                        moda = notas[i];
+                let moda = 0;
+                let cont = 0;
+                for (let nota of repeticiones.keys()) {
+                    if (cont < repeticiones.get(nota)) {
+                        cont = repeticiones.get(nota);
+                        moda = nota;
                     }
                 }
 
@@ -89,7 +92,7 @@ do {
 
                 window.alert(
                     `Estadísticas:\n` +
-                    `La moda es: ${moda} (aparece ${maxRepeticiones} veces)\n` +
+                    `La moda es: ${moda} (aparece ${cont} veces)\n` +
                     `El máximo es: ${maximo}\n` +
                     `El mínimo es: ${minimo}\n` +
                     `La media es: ${media.toFixed(2)}`
