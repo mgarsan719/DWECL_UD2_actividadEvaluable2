@@ -1,3 +1,41 @@
+class Libro {
+    constructor(titulo, autor, ejemplares) {
+        this.titulo = titulo;
+        this.autor = autor;
+        this.ejemplares = ejemplares;
+    }
+
+    prestar() {
+        if (this.ejemplares > 0) {
+            this.ejemplares--;
+            return true;
+        }
+        return false;
+    }
+
+    devolver() {
+        this.ejemplares++;
+    }
+
+    modificarEjemplares(nuevaCantidad) {
+        this.ejemplares = nuevaCantidad;
+    }
+
+    obtenerInfoDetallada(isbn) {
+        return (
+            `Información del libro:\n` +
+            `- ISBN: ${isbn}\n` +
+            `- Título: ${this.titulo}\n` +
+            `- Autor: ${this.autor}\n` +
+            `- Ejemplares disponibles: ${this.ejemplares}`
+        );
+    }
+
+    obtenerLineaCatalogo(isbn) {
+        return `ISBN: ${isbn} | Título: ${this.titulo} | Autor: ${this.autor} | Ejemplares: ${this.ejemplares}`;
+    }
+}
+
 const biblioteca = new Map();
 let entrar = true;
 
@@ -15,42 +53,30 @@ do {
         "I. Mostrar estadísticas\n" +
         "J. Vaciar catálogo\n" +
         "K. Salir"
-    );
+    ).toUpperCase();
 
-    const opt = entrada.trim().toUpperCase();
+    if (entrada === null) {
+        break;
+    }
 
-    switch (opt) {
+    switch (entrada) {
         case "A": {
             const isbn = introducirTexto("Introduce el ISBN del libro:");
-            if (isbn === null) {
-                break;
-            }
 
             if (biblioteca.has(isbn)) {
                 window.alert(`Ya existe un libro registrado con el ISBN "${isbn}".`);
-            } else {
+            } 
+            else {
                 const titulo = introducirTexto("Introduce el título del libro:");
-                if (titulo === null) {
-                    break;
-                }
 
                 const autor = introducirTexto("Introduce el autor del libro:");
-                if (autor === null) {
-                    break;
-                }
 
                 const ejemplares = introducirEnteroPositivo("Introduce el número de ejemplares disponibles:");
-                if (ejemplares === null) {
-                    break;
-                }
 
-                biblioteca.set(isbn, {
-                    titulo: titulo,
-                    autor: autor,
-                    ejemplares: ejemplares
-                });
+                const nuevoLibro = new Libro(titulo, autor, ejemplares);
+                biblioteca.set(isbn, nuevoLibro);
 
-                window.alert(`Libro "${titulo}" añadido correctamente al catálogo.`);
+                window.alert(`Libro "${nuevoLibro.titulo}" añadido correctamente al catálogo.`);
                 console.log(biblioteca);
             }
             break;
@@ -59,9 +85,7 @@ do {
         case "B": {
             if (biblioteca.size !== 0) {
                 const isbn = introducirTexto("Introduce el ISBN del libro a eliminar:");
-                if (isbn === null) {
-                    break;
-                }
+                if (isbn === null) break;
 
                 if (biblioteca.delete(isbn)) {
                     window.alert(`El libro con ISBN "${isbn}" ha sido eliminado.`);
@@ -78,19 +102,11 @@ do {
         case "C": {
             if (biblioteca.size !== 0) {
                 const isbn = introducirTexto("Introduce el ISBN del libro a consultar:");
-                if (isbn === null) {
-                    break;
-                }
+                if (isbn === null) break;
 
                 const libro = biblioteca.get(isbn);
                 if (libro !== undefined) {
-                    window.alert(
-                        `Información del libro:\n` +
-                        `- ISBN: ${isbn}\n` +
-                        `- Título: ${libro.titulo}\n` +
-                        `- Autor: ${libro.autor}\n` +
-                        `- Ejemplares disponibles: ${libro.ejemplares}`
-                    );
+                    window.alert(libro.obtenerInfoDetallada(isbn));
                 } else {
                     window.alert(`No existe ningún libro con el ISBN "${isbn}".`);
                 }
@@ -104,7 +120,7 @@ do {
             if (biblioteca.size !== 0) {
                 let listado = "Catálogo de la biblioteca:\n\n";
                 for (const [isbn, libro] of biblioteca) {
-                    listado += `ISBN: ${isbn} | Título: ${libro.titulo} | Autor: ${libro.autor} | Ejemplares: ${libro.ejemplares}\n`;
+                    listado += libro.obtenerLineaCatalogo(isbn) + "\n";
                 }
                 listado += `\nTotal de libros registrados: ${biblioteca.size}`;
                 window.alert(listado);
@@ -117,20 +133,16 @@ do {
         case "E": {
             if (biblioteca.size !== 0) {
                 const isbn = introducirTexto("Introduce el ISBN del libro a modificar:");
-                if (isbn === null) {
-                    break;
-                }
+                if (isbn === null) break;
 
                 const libro = biblioteca.get(isbn);
                 if (libro !== undefined) {
                     const nuevosEjemplares = introducirEnteroPositivo(
                         `Ejemplares actuales de "${libro.titulo}": ${libro.ejemplares}\nIntroduce la nueva cantidad de ejemplares:`
                     );
-                    if (nuevosEjemplares === null) {
-                        break;
-                    }
+                    if (nuevosEjemplares === null) break;
 
-                    libro.ejemplares = nuevosEjemplares;
+                    libro.modificarEjemplares(nuevosEjemplares);
                     window.alert(`Ejemplares de "${libro.titulo}" actualizados a ${libro.ejemplares}.`);
                     console.log(biblioteca);
                 } else {
@@ -145,9 +157,7 @@ do {
         case "F": {
             if (biblioteca.size !== 0) {
                 const autorBuscado = introducirTexto("Introduce el nombre del autor a buscar:");
-                if (autorBuscado === null) {
-                    break;
-                }
+                if (autorBuscado === null) break;
 
                 let resultados = `Libros de "${autorBuscado}":\n\n`;
                 let encontrados = 0;
@@ -173,14 +183,11 @@ do {
         case "G": {
             if (biblioteca.size !== 0) {
                 const isbn = introducirTexto("Introduce el ISBN del libro a prestar:");
-                if (isbn === null) {
-                    break;
-                }
+                if (isbn === null) break;
 
                 const libro = biblioteca.get(isbn);
                 if (libro !== undefined) {
-                    if (libro.ejemplares > 0) {
-                        libro.ejemplares--;
+                    if (libro.prestar()) {
                         window.alert(`Préstamo realizado de "${libro.titulo}". Quedan ${libro.ejemplares} ejemplares.`);
                         console.log(biblioteca);
                     } else {
@@ -198,13 +205,11 @@ do {
         case "H": {
             if (biblioteca.size !== 0) {
                 const isbn = introducirTexto("Introduce el ISBN del libro a devolver:");
-                if (isbn === null) {
-                    break;
-                }
+                if (isbn === null) break;
 
                 const libro = biblioteca.get(isbn);
                 if (libro !== undefined) {
-                    libro.ejemplares++;
+                    libro.devolver();
                     window.alert(`Devolución registrada de "${libro.titulo}". Ahora hay ${libro.ejemplares} ejemplares disponibles.`);
                     console.log(biblioteca);
                 } else {
@@ -283,7 +288,7 @@ function introducirEnteroPositivo(mensaje) {
         if (entrada === null) {
             return null;
         }
-        numero = parseInt(entrada);
+        numero = parseInt(entrada, 10);
         if (isNaN(numero) || numero < 0) {
             window.alert("Introduce un número entero mayor o igual a 0.");
         }
