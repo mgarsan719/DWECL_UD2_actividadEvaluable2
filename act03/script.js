@@ -212,12 +212,15 @@ do {
                     libro.devolver();
                     window.alert(`Devolución registrada de "${libro.titulo}". Ahora hay ${libro.ejemplares} ejemplares disponibles.`);
                     console.log(biblioteca);
-                } else {
+                } 
+                else {
                     window.alert(`No existe ningún libro con el ISBN "${isbn}".`);
                 }
-            } else {
+            } 
+            else {
                 window.alert("El catálogo está vacío.");
             }
+            
             break;
         }
 
@@ -229,6 +232,7 @@ do {
 
                 for (const libro of biblioteca.values()) {
                     totalEjemplares += libro.ejemplares;
+                    
                     if (libro.ejemplares > maxEjemplares) {
                         maxEjemplares = libro.ejemplares;
                         libroMasEjemplares = libro;
@@ -241,9 +245,11 @@ do {
                     `- Total de ejemplares disponibles: ${totalEjemplares}\n` +
                     `- Libro con más ejemplares: "${libroMasEjemplares.titulo}" (${maxEjemplares} ejemplares)`
                 );
-            } else {
+            } 
+            else {
                 window.alert("El catálogo está vacío, no hay estadísticas que mostrar.");
             }
+            
             break;
         }
 
@@ -251,15 +257,18 @@ do {
             biblioteca.clear();
             window.alert("Se ha vaciado todo el catálogo de la biblioteca.");
             console.log(biblioteca);
+            
             break;
 
         case "K":
             window.alert("Ha seleccionado finalizar el programa, saliendo...");
             entrar = false;
+            
             break;
 
         default:
             window.alert("Opción no válida. Introduce una letra de la A a la K.");
+            
             break;
     }
 
@@ -269,9 +278,7 @@ function introducirTexto(mensaje) {
     let texto;
     do {
         texto = window.prompt(mensaje);
-        if (texto === null) {
-            return null;
-        }
+
         texto = texto.trim();
         if (texto === "") {
             window.alert("Este campo no puede estar vacío.");
@@ -285,9 +292,7 @@ function introducirEnteroPositivo(mensaje) {
     let numero;
     do {
         const entrada = window.prompt(mensaje);
-        if (entrada === null) {
-            return null;
-        }
+
         numero = parseInt(entrada, 10);
         if (isNaN(numero) || numero < 0) {
             window.alert("Introduce un número entero mayor o igual a 0.");
